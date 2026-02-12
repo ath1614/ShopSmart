@@ -1,0 +1,9 @@
+{
+  "testEnvironment": "jsdom",
+  "setupFilesAfterFramework": ["@testing-library/jest-dom"],
+  "transform": { "^.+\\.jsx?$": "babel-jest" },
+  "moduleNameMapper": {
+    "\\.(css|less|scss)$": "<rootDir>/src/__tests__/__mocks__/styleMock.js"
+  },
+  "testMatch": ["**/__tests__/**/*.test.{js,jsx}"]
+}
