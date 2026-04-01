@@ -11,7 +11,7 @@ jobs:
     needs: []
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Deploy via SSH to EC2
         uses: appleboy/ssh-action@v1.0.3
