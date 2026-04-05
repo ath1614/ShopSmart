@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Package, ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
 import api from '../lib/api';
 
@@ -26,17 +27,23 @@ export default function OrdersPage() {
     <div className="min-h-screen bg-[#FAFAFA]">
       <Navbar />
       <main className="px-8 py-10 max-w-4xl mx-auto">
-        <div className="bg-[#FFD6EC] border-2 border-black shadow-brutal p-6 mb-8">
-          <h1 className="text-4xl font-black tracking-tight">MY ORDERS 📦</h1>
-          <p className="text-gray-600 font-medium">{orders.length} order{orders.length !== 1 ? 's' : ''} total</p>
+        <div className="bg-[#FFD6EC] border-2 border-black shadow-brutal p-6 mb-8 flex items-center gap-4">
+          <div className="w-12 h-12 bg-black flex items-center justify-center">
+            <Package size={24} color="white" strokeWidth={2.5} />
+          </div>
+          <div>
+            <h1 className="text-4xl font-black tracking-tight">MY ORDERS</h1>
+            <p className="text-gray-600 font-medium">{orders.length} order{orders.length !== 1 ? 's' : ''} total</p>
+          </div>
         </div>
 
         {loading ? (
           <div className="space-y-4">{[...Array(3)].map((_, i) => <div key={i} className="border-2 border-black shadow-brutal h-24 animate-pulse bg-gray-100" />)}</div>
         ) : orders.length === 0 ? (
-          <div className="card-yellow text-center py-20">
+          <div className="bg-[#FFF9C4] border-2 border-black shadow-brutal text-center py-20">
+            <Package size={56} className="mx-auto mb-4 text-gray-300" strokeWidth={1.5} />
             <p className="font-black text-2xl text-gray-500 mb-4">NO ORDERS YET.</p>
-            <Link to="/products" className="btn-pink inline-block">START SHOPPING →</Link>
+            <Link to="/products" className="btn-pink inline-flex items-center gap-2">START SHOPPING <ArrowRight size={16} /></Link>
           </div>
         ) : (
           <div className="space-y-4">
@@ -55,7 +62,9 @@ export default function OrdersPage() {
                       {order.status}
                     </span>
                     <span className="font-black text-xl">${Number(order.total).toFixed(2)}</span>
-                    <span className="font-black text-gray-400">{expanded === order.id ? '▲' : '▼'}</span>
+                    {expanded === order.id
+                      ? <ChevronUp size={18} strokeWidth={2.5} />
+                      : <ChevronDown size={18} strokeWidth={2.5} />}
                   </div>
                 </div>
 
@@ -69,7 +78,7 @@ export default function OrdersPage() {
                             <div className="border-2 border-black w-12 h-12 overflow-hidden flex-shrink-0">
                               {firstImage
                                 ? <img src={firstImage} alt={item.product?.name} className="w-full h-full object-cover" />
-                                : <div className="w-full h-full bg-gray-100 flex items-center justify-center text-xl">🛍️</div>
+                                : <div className="w-full h-full bg-gray-100" />
                               }
                             </div>
                             <div>

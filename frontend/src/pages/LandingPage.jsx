@@ -1,11 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Zap, ShoppingCart, BarChart2, Lock, ArrowRight, Package, Star } from 'lucide-react';
 
 const features = [
-  { icon: '⚡', title: 'AI-Powered Search', desc: 'Find products with natural language queries.', bg: 'bg-[#FFD6EC]' },
-  { icon: '🛒', title: 'Smart Cart', desc: 'Price alerts, recommendations, one-click reorder.', bg: 'bg-[#FFF9C4]' },
-  { icon: '📊', title: 'Seller Dashboard', desc: 'Real-time analytics, inventory and order management.', bg: 'bg-[#C8E6FF]' },
-  { icon: '🔒', title: 'Secure Auth', desc: 'JWT + OAuth via Google and GitHub.', bg: 'bg-[#FFD6EC]' },
+  { icon: Zap, title: 'AI-Powered Search', desc: 'Find products with natural language queries.', bg: 'bg-[#FFD6EC]' },
+  { icon: ShoppingCart, title: 'Smart Cart', desc: 'Price alerts, recommendations, one-click reorder.', bg: 'bg-[#FFF9C4]' },
+  { icon: BarChart2, title: 'Seller Dashboard', desc: 'Real-time analytics, inventory and order management.', bg: 'bg-[#C8E6FF]' },
+  { icon: Lock, title: 'Secure Auth', desc: 'JWT + OAuth via Google and GitHub.', bg: 'bg-[#FFD6EC]' },
 ];
 
 export default function LandingPage() {
@@ -36,20 +37,27 @@ export default function LandingPage() {
               The next-gen commerce platform powered by AI. Natural language search, intelligent recommendations, real-time analytics.
             </p>
             <div className="flex gap-4 flex-wrap">
-              <Link to="/register" className="btn-pink text-lg px-10 py-4">START FOR FREE →</Link>
+              <Link to="/register" className="btn-pink text-lg px-10 py-4 flex items-center gap-2">
+                START FOR FREE <ArrowRight size={20} />
+              </Link>
               <Link to="/login" className="btn-secondary text-lg px-10 py-4">SIGN IN</Link>
             </div>
           </div>
-          {/* Splash art panel */}
+
+          {/* Hero visual */}
           <div className="relative hidden md:block">
-            <div className="bg-[#FFE44D] border-2 border-black shadow-brutal-xl w-full h-80 flex items-center justify-center text-8xl">
-              🛍️
+            <div className="bg-[#FFE44D] border-2 border-black shadow-brutal-xl w-full h-80 overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&q=80"
+                alt="ShopSmart store"
+                className="w-full h-full object-cover"
+              />
             </div>
-            <div className="absolute -bottom-4 -right-4 bg-[#FF6EC7] border-2 border-black w-24 h-24 flex items-center justify-center text-4xl shadow-brutal">
-              ✨
+            <div className="absolute -bottom-4 -right-4 bg-[#FF6EC7] border-2 border-black shadow-brutal w-24 h-24 flex items-center justify-center">
+              <Star size={36} strokeWidth={2.5} />
             </div>
-            <div className="absolute -top-4 -left-4 bg-[#C8E6FF] border-2 border-black w-16 h-16 flex items-center justify-center text-2xl shadow-brutal">
-              ⚡
+            <div className="absolute -top-4 -left-4 bg-[#C8E6FF] border-2 border-black shadow-brutal w-16 h-16 flex items-center justify-center">
+              <Zap size={28} strokeWidth={2.5} />
             </div>
           </div>
         </div>
@@ -60,13 +68,18 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto">
           <h2 className="text-4xl font-black mb-12 tracking-tight">EVERYTHING YOU NEED.</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((f) => (
-              <div key={f.title} className={`${f.bg} border-2 border-black shadow-brutal p-6 hover:shadow-brutal-xl hover:-translate-y-1 transition-all`}>
-                <div className="text-4xl mb-4">{f.icon}</div>
-                <h3 className="text-lg font-black mb-2 uppercase tracking-tight">{f.title}</h3>
-                <p className="text-gray-700 font-medium text-sm">{f.desc}</p>
-              </div>
-            ))}
+            {features.map((f) => {
+              const Icon = f.icon;
+              return (
+                <div key={f.title} className={`${f.bg} border-2 border-black shadow-brutal p-6 hover:shadow-brutal-xl hover:-translate-y-1 transition-all`}>
+                  <div className="mb-4 w-12 h-12 bg-black flex items-center justify-center">
+                    <Icon size={24} color="white" strokeWidth={2.5} />
+                  </div>
+                  <h3 className="text-lg font-black mb-2 uppercase tracking-tight">{f.title}</h3>
+                  <p className="text-gray-700 font-medium text-sm">{f.desc}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -94,8 +107,8 @@ export default function LandingPage() {
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-5xl font-black mb-6 tracking-tight">READY TO BUILD?</h2>
           <p className="text-gray-700 text-lg mb-8 font-medium">Join thousands of sellers and shoppers on ShopSmart.</p>
-          <Link to="/register" className="btn-primary inline-block text-lg px-12 py-4">
-            CREATE ACCOUNT →
+          <Link to="/register" className="btn-primary inline-flex items-center gap-2 text-lg px-12 py-4">
+            CREATE ACCOUNT <ArrowRight size={20} />
           </Link>
         </div>
       </section>
