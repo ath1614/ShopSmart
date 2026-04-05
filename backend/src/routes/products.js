@@ -8,7 +8,7 @@ router.get('/', async (req, res, next) => {
   try {
     const { search, categoryId, page = 1, limit = 20 } = req.query;
     const where = {
-      ...(search && { name: { contains: search, mode: 'insensitive' } }),
+      ...(search && { name: { contains: search } }),
       ...(categoryId && { categoryId }),
     };
     const [products, total] = await Promise.all([

@@ -4,10 +4,18 @@ export default {
   theme: {
     extend: {
       fontFamily: { sans: ['Inter', 'sans-serif'] },
+      colors: {
+        pink: { splash: '#FF6EC7', light: '#FFD6EC' },
+        yellow: { splash: '#FFE44D', light: '#FFF9C4' },
+        blue: { splash: '#60B8FF', light: '#C8E6FF' },
+      },
       boxShadow: {
         brutal: '4px 4px 0px 0px #000',
         'brutal-lg': '6px 6px 0px 0px #000',
         'brutal-xl': '8px 8px 0px 0px #000',
+        'brutal-pink': '4px 4px 0px 0px #FF6EC7',
+        'brutal-yellow': '4px 4px 0px 0px #FFE44D',
+        'brutal-blue': '4px 4px 0px 0px #60B8FF',
       },
     },
   },

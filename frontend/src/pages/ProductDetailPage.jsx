@@ -9,6 +9,7 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState(null);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
+  const [activeImg, setActiveImg] = useState(0);
 
   useEffect(() => {
     api.get(`/products/${id}`).then(({ data }) => setProduct(data)).catch(() => navigate('/products'));
@@ -23,55 +24,94 @@ export default function ProductDetailPage() {
   };
 
   if (!product) return (
-    <div className="min-h-screen bg-white"><Navbar />
+    <div className="min-h-screen bg-[#FAFAFA]"><Navbar />
       <div className="flex items-center justify-center h-96">
-        <p className="font-black text-2xl animate-pulse">LOADING...</p>
+        <div className="bg-[#FFE44D] border-2 border-black shadow-brutal px-10 py-6">
+          <p className="font-black text-2xl animate-pulse">LOADING...</p>
+        </div>
       </div>
     </div>
   );
 
+  const images = product.images?.split(',') || [];
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#FAFAFA]">
       <Navbar />
       <main className="px-8 py-10 max-w-5xl mx-auto">
         <button onClick={() => navigate(-1)} className="btn-secondary mb-8 text-sm px-4 py-2">← BACK</button>
+
         <div className="grid md:grid-cols-2 gap-10">
-          <div className="bg-gray-100 border-2 border-black h-96 flex items-center justify-center text-8xl shadow-brutal">
-            🛍️
-          </div>
+          {/* Images */}
           <div>
-            <div className="badge mb-3">{product.category?.name || 'GENERAL'}</div>
+            <div className="border-2 border-black shadow-brutal h-96 overflow-hidden mb-3">
+              {images[activeImg] ? (
+                <img src={images[activeImg]} alt={product.name} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-[#FFF9C4] flex items-center justify-center text-8xl">🛍️</div>
+              )}
+            </div>
+            {images.length > 1 && (
+              <div className="flex gap-2">
+                {images.map((img, i) => (
+                  <button key={i} onClick={() => setActiveImg(i)}
+                    className={`border-2 border-black w-20 h-20 overflow-hidden transition-all ${activeImg === i ? 'shadow-brutal-pink' : 'opacity-60 hover:opacity-100'}`}>
+                    <img src={img} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Info */}
+          <div>
+            <div className="badge-pink mb-3">{product.category?.name || 'GENERAL'}</div>
             <h1 className="text-4xl font-black tracking-tight mb-3">{product.name}</h1>
             <p className="text-gray-600 font-medium mb-6">{product.description}</p>
-            <div className="text-5xl font-black mb-6">${Number(product.price).toFixed(2)}</div>
-            <p className="text-sm font-bold text-gray-500 mb-6">{product.stock} IN STOCK</p>
+
+            <div className="bg-[#FFE44D] border-2 border-black shadow-brutal inline-block px-6 py-3 mb-6">
+              <span className="text-4xl font-black">${Number(product.price).toFixed(2)}</span>
+            </div>
+
+            <p className="text-sm font-black mb-6">
+              <span className={`px-3 py-1 border-2 border-black ${product.stock > 10 ? 'bg-[#D4F5D4]' : 'bg-[#FFD6EC]'}`}>
+                {product.stock > 0 ? `${product.stock} IN STOCK` : 'OUT OF STOCK'}
+              </span>
+            </p>
 
             <div className="flex items-center gap-4 mb-6">
               <label className="font-black text-sm uppercase">QTY</label>
-              <div className="flex border-2 border-black">
-                <button onClick={() => setQty(q => Math.max(1, q - 1))} className="px-4 py-2 font-black border-r-2 border-black hover:bg-black hover:text-white transition-colors">−</button>
-                <span className="px-6 py-2 font-black">{qty}</span>
-                <button onClick={() => setQty(q => Math.min(product.stock, q + 1))} className="px-4 py-2 font-black border-l-2 border-black hover:bg-black hover:text-white transition-colors">+</button>
+              <div className="flex border-2 border-black shadow-brutal">
+                <button onClick={() => setQty(q => Math.max(1, q - 1))}
+                  className="px-4 py-2 font-black border-r-2 border-black hover:bg-[#FF6EC7] transition-colors">−</button>
+                <span className="px-6 py-2 font-black bg-white">{qty}</span>
+                <button onClick={() => setQty(q => Math.min(product.stock, q + 1))}
+                  className="px-4 py-2 font-black border-l-2 border-black hover:bg-[#FF6EC7] transition-colors">+</button>
               </div>
             </div>
 
-            <button onClick={addToCart} className="btn-primary w-full text-lg py-4">
-              {added ? '✓ ADDED TO CART' : 'ADD TO CART →'}
+            <button onClick={addToCart} disabled={product.stock === 0}
+              className={`w-full text-lg py-4 font-black border-2 border-black shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all uppercase tracking-wider ${added ? 'bg-[#D4F5D4]' : 'bg-[#FF6EC7]'}`}>
+              {added ? '✓ ADDED TO CART!' : 'ADD TO CART →'}
             </button>
           </div>
         </div>
 
+        {/* Reviews */}
         {product.reviews?.length > 0 && (
           <div className="mt-12">
-            <h2 className="text-2xl font-black mb-6 border-b-2 border-black pb-4">REVIEWS ({product.reviews.length})</h2>
-            <div className="space-y-4">
-              {product.reviews.map((r) => (
-                <div key={r.id} className="card">
+            <h2 className="text-2xl font-black mb-6 border-b-2 border-black pb-4">
+              REVIEWS <span className="text-[#FF6EC7]">({product.reviews.length})</span>
+            </h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              {product.reviews.map((r, i) => (
+                <div key={r.id} className={`${i % 2 === 0 ? 'bg-[#FFF9C4]' : 'bg-[#FFD6EC]'} border-2 border-black shadow-brutal p-4`}>
                   <div className="flex justify-between mb-2">
                     <span className="font-black">{r.user?.name || 'Anonymous'}</span>
-                    <span className="badge">{'★'.repeat(r.rating)}</span>
+                    <span className="text-[#FF6EC7] font-black">{'★'.repeat(r.rating)}</span>
                   </div>
-                  <p className="font-medium text-gray-600">{r.content}</p>
+                  {r.title && <p className="font-black text-sm mb-1">{r.title}</p>}
+                  <p className="font-medium text-gray-600 text-sm">{r.content}</p>
                 </div>
               ))}
             </div>

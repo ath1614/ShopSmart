@@ -5,26 +5,52 @@
 @layer base {
   * { box-sizing: border-box; }
   body {
-    @apply bg-white text-black font-sans antialiased;
+    @apply bg-[#FAFAFA] text-black font-sans antialiased;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-black text-white font-bold px-6 py-3 border-2 border-black shadow-brutal
-           hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all duration-100 cursor-pointer;
+    @apply bg-black text-white font-black px-6 py-3 border-2 border-black shadow-brutal
+           hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all duration-100 cursor-pointer uppercase tracking-wider;
   }
   .btn-secondary {
-    @apply bg-white text-black font-bold px-6 py-3 border-2 border-black shadow-brutal
-           hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all duration-100 cursor-pointer;
+    @apply bg-white text-black font-black px-6 py-3 border-2 border-black shadow-brutal
+           hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all duration-100 cursor-pointer uppercase tracking-wider;
+  }
+  .btn-pink {
+    @apply bg-[#FF6EC7] text-black font-black px-6 py-3 border-2 border-black shadow-brutal
+           hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all duration-100 cursor-pointer uppercase tracking-wider;
+  }
+  .btn-yellow {
+    @apply bg-[#FFE44D] text-black font-black px-6 py-3 border-2 border-black shadow-brutal
+           hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all duration-100 cursor-pointer uppercase tracking-wider;
   }
   .card {
     @apply bg-white border-2 border-black shadow-brutal p-6;
   }
+  .card-pink {
+    @apply bg-[#FFD6EC] border-2 border-black shadow-brutal p-6;
+  }
+  .card-yellow {
+    @apply bg-[#FFF9C4] border-2 border-black shadow-brutal p-6;
+  }
+  .card-blue {
+    @apply bg-[#C8E6FF] border-2 border-black shadow-brutal p-6;
+  }
   .input {
-    @apply w-full border-2 border-black px-4 py-3 font-medium focus:outline-none focus:shadow-brutal transition-all;
+    @apply w-full border-2 border-black px-4 py-3 font-medium focus:outline-none focus:shadow-brutal transition-all bg-white;
   }
   .badge {
-    @apply inline-block bg-black text-white text-xs font-bold px-2 py-1 uppercase tracking-wider;
+    @apply inline-block bg-black text-white text-xs font-black px-2 py-1 uppercase tracking-wider;
+  }
+  .badge-pink {
+    @apply inline-block bg-[#FF6EC7] text-black text-xs font-black px-2 py-1 uppercase tracking-wider border border-black;
+  }
+  .badge-yellow {
+    @apply inline-block bg-[#FFE44D] text-black text-xs font-black px-2 py-1 uppercase tracking-wider border border-black;
+  }
+  .badge-blue {
+    @apply inline-block bg-[#60B8FF] text-black text-xs font-black px-2 py-1 uppercase tracking-wider border border-black;
   }
 }

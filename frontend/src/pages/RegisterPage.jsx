@@ -28,16 +28,16 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <nav className="border-b-2 border-black px-8 py-4">
-        <Link to="/" className="text-2xl font-black tracking-tight">SHOPSMART</Link>
+        <Link to="/" className="text-2xl font-black tracking-tight">SHOP<span className="text-[#FF6EC7]">SMART</span></Link>
       </nav>
       <div className="flex-1 flex items-center justify-center px-4">
         <div className="w-full max-w-md">
-          <div className="card">
+          <div className="bg-white border-2 border-black shadow-brutal p-6">
             <h1 className="text-3xl font-black mb-2 tracking-tight">CREATE ACCOUNT</h1>
             <p className="text-gray-500 font-medium mb-8">Join ShopSmart today.</p>
 
             {error && (
-              <div className="bg-black text-white font-bold px-4 py-3 mb-6 text-sm">{error}</div>
+              <div className="bg-[#FF6EC7] border-2 border-black font-bold px-4 py-3 mb-6 text-sm">{error}</div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -75,7 +75,7 @@ export default function RegisterPage() {
                   required
                 />
               </div>
-              <button type="submit" disabled={loading} className="btn-primary w-full text-center">
+              <button type="submit" disabled={loading} className="btn-pink w-full text-center">
                 {loading ? 'CREATING...' : 'CREATE ACCOUNT →'}
               </button>
             </form>
