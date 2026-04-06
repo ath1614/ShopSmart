@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Star, CheckCircle, Minus, Plus } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
@@ -21,7 +21,7 @@ export default function ProductDetailPage() {
       await api.post('/cart', { productId: id, quantity: qty });
       setAdded(true);
       setTimeout(() => setAdded(false), 2000);
-    } catch {}
+    } catch (err) { console.error(err); }
   };
 
   if (!product) return (

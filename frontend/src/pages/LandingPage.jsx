@@ -1,6 +1,5 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { Zap, ShoppingCart, BarChart2, Lock, ArrowRight, Package, Star } from 'lucide-react';
+import { Zap, ShoppingCart, BarChart2, Lock, ArrowRight, Star } from 'lucide-react';
 
 const features = [
   { icon: Zap, title: 'AI-Powered Search', desc: 'Find products with natural language queries.', bg: 'bg-[#FFD6EC]' },

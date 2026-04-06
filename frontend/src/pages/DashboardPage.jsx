@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Package, CreditCard, ShoppingCart, CheckCircle, ShoppingBag, Settings, ArrowRight } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
@@ -21,8 +21,8 @@ export default function DashboardPage() {
   const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
-    api.get('/orders').then(({ data }) => setOrders(data)).catch(() => {});
-    api.get('/cart').then(({ data }) => setCartCount(data.length)).catch(() => {});
+    api.get('/orders').then(({ data }) => setOrders(data)).catch((err) => console.error(err));
+    api.get('/cart').then(({ data }) => setCartCount(data.length)).catch((err) => console.error(err));
   }, []);
 
   const totalSpent = orders.reduce((s, o) => s + Number(o.total), 0);
@@ -52,7 +52,7 @@ export default function DashboardPage() {
           <h1 className="text-5xl font-black tracking-tight">
             WELCOME BACK{user?.name ? `, ${user.name.toUpperCase().split(' ')[0]}` : ''}.
           </h1>
-          <p className="text-gray-700 font-medium mt-2">Here's what's happening with your account today.</p>
+          <p className="text-gray-700 font-medium mt-2">Here&apos;s what&apos;s happening with your account today.</p>
         </div>
 
         {/* Stats */}

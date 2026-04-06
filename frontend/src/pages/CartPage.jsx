@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, CheckCircle } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
@@ -12,7 +12,7 @@ export default function CartPage() {
 
   const fetchCart = async () => {
     try { const { data } = await api.get('/cart'); setItems(data); }
-    catch {} finally { setLoading(false); }
+    catch (err) { console.error(err); } finally { setLoading(false); }
   };
 
   useEffect(() => { fetchCart(); }, []);
@@ -36,7 +36,7 @@ export default function CartPage() {
       });
       setCheckedOut(true);
       setTimeout(() => navigate('/orders'), 1500);
-    } catch {}
+    } catch (err) { console.error(err); }
   };
 
   const total = items.reduce((s, i) => s + Number(i.product.price) * i.quantity, 0);

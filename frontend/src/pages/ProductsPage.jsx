@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
@@ -50,7 +50,7 @@ export default function ProductsPage() {
       setProducts(data.products);
       setTotalPages(data.pages);
       setTotal(data.total);
-    } catch {}
+    } catch (err) { console.error(err); }
     setLoading(false);
   };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Package, ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
