@@ -1,16 +1,16 @@
-name: Build, Push & Deploy to ECS
+name: Deploy to ECR and ECS
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main]
   pull_request:
-    branches: [ main, master ]
+    branches: [main]
 
 env:
   AWS_REGION: us-east-1
   ECR_REGISTRY: 807717203754.dkr.ecr.us-east-1.amazonaws.com
-  BACKEND_REPO: shopsmart-backend
-  FRONTEND_REPO: shopsmart-frontend
+  BACKEND_IMAGE: shopsmart-backend
+  FRONTEND_IMAGE: shopsmart-frontend
   ECS_CLUSTER: shopsmart-cluster
   BACKEND_SERVICE: shopsmart-backend-service
   FRONTEND_SERVICE: shopsmart-frontend-service
@@ -18,15 +18,9 @@ env:
 
 jobs:
   build-and-push:
-    name: Build & Push Docker Images
+    name: Build & Push to ECR
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-
-    outputs:
-      backend-image: ${{ steps.image-backend.outputs.image }}
-      frontend-image: ${{ steps.image-frontend.outputs.image }}
+    if: github.event_name == 'push'
 
     steps:
       - name: Checkout code
@@ -35,50 +29,38 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::807717203754:role/LabRole
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push backend image
-        id: image-backend
-        working-directory: ./backend
-        run: |
-          IMAGE_TAG=${{ github.sha }}
-          BACKEND_IMAGE=${{ env.ECR_REGISTRY }}/${{ env.BACKEND_REPO }}:$IMAGE_TAG
-          BACKEND_LATEST=${{ env.ECR_REGISTRY }}/${{ env.BACKEND_REPO }}:latest
-          
-          docker build -t $BACKEND_IMAGE -t $BACKEND_LATEST .
-          docker push $BACKEND_IMAGE
-          docker push $BACKEND_LATEST
-          
-          echo "image=$BACKEND_IMAGE" >> $GITHUB_OUTPUT
-          echo "✅ Backend image pushed: $BACKEND_IMAGE"
+      - name: Set image tag
+        id: tag
+        run: echo "TAG=${{ github.sha }}" >> $GITHUB_OUTPUT
 
-      - name: Build, tag, and push frontend image
-        id: image-frontend
-        working-directory: ./frontend
+      - name: Build and push backend image
         run: |
-          IMAGE_TAG=${{ github.sha }}
-          FRONTEND_IMAGE=${{ env.ECR_REGISTRY }}/${{ env.FRONTEND_REPO }}:$IMAGE_TAG
-          FRONTEND_LATEST=${{ env.ECR_REGISTRY }}/${{ env.FRONTEND_REPO }}:latest
-          
-          docker build -t $FRONTEND_IMAGE -t $FRONTEND_LATEST .
-          docker push $FRONTEND_IMAGE
-          docker push $FRONTEND_LATEST
-          
-          echo "image=$FRONTEND_IMAGE" >> $GITHUB_OUTPUT
-          echo "✅ Frontend image pushed: $FRONTEND_IMAGE"
+          docker buildx build --platform linux/amd64 \
+            -t $ECR_REGISTRY/$BACKEND_IMAGE:${{ steps.tag.outputs.TAG }} \
+            -t $ECR_REGISTRY/$BACKEND_IMAGE:latest \
+            --push ./backend
 
-  deploy-to-ecs:
+      - name: Build and push frontend image
+        run: |
+          docker buildx build --platform linux/amd64 \
+            -t $ECR_REGISTRY/$FRONTEND_IMAGE:${{ steps.tag.outputs.TAG }} \
+            -t $ECR_REGISTRY/$FRONTEND_IMAGE:latest \
+            --push ./frontend
+
+  deploy:
     name: Deploy to ECS
-    needs: build-and-push
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
+    needs: build-and-push
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout code
@@ -87,50 +69,46 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::807717203754:role/LabRole
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Update ECS task definition with new backend image
+      - name: Download current task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition $TASK_DEFINITION \
+            --region $AWS_REGION \
+            --query taskDefinition > task-def.json
+
+      - name: Update backend image in task definition
         id: task-def-backend
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ecs-task-definition.json
+          task-definition: task-def.json
           container-name: shopsmart-backend
-          image: ${{ needs.build-and-push.outputs.backend-image }}
+          image: ${{ env.ECR_REGISTRY }}/${{ env.BACKEND_IMAGE }}:${{ github.sha }}
 
-      - name: Update ECS task definition with new frontend image
+      - name: Update frontend image in task definition
         id: task-def-frontend
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ${{ steps.task-def-backend.outputs.task-definition }}
           container-name: shopsmart-frontend
-          image: ${{ needs.build-and-push.outputs.frontend-image }}
+          image: ${{ env.ECR_REGISTRY }}/${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
 
-      - name: Deploy to Amazon ECS (Backend Service)
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      - name: Deploy backend service to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.task-def-frontend.outputs.task-definition }}
           service: ${{ env.BACKEND_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
 
-      - name: Deploy to Amazon ECS (Frontend Service)
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      - name: Deploy frontend service to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.task-def-frontend.outputs.task-definition }}
           service: ${{ env.FRONTEND_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
-
-      - name: Print deployment status
-        run: |
-          echo "✅ Deployment complete!"
-          echo "Backend Service: ${{ env.BACKEND_SERVICE }}"
-          echo "Frontend Service: ${{ env.FRONTEND_SERVICE }}"
-          echo "Cluster: ${{ env.ECS_CLUSTER }}"
-          aws ecs describe-services \
-            --cluster ${{ env.ECS_CLUSTER }} \
-            --services ${{ env.BACKEND_SERVICE }} ${{ env.FRONTEND_SERVICE }} \
-            --region ${{ env.AWS_REGION }} \
-            --query 'services[*].[serviceName,status,runningCount,desiredCount]' \
-            --output table
