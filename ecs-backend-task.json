@@ -1,0 +1,35 @@
+{
+  "family": "shopsmart-backend-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::807717203754:role/LabRole",
+  "taskRoleArn": "arn:aws:iam::807717203754:role/LabRole",
+  "containerDefinitions": [
+    {
+      "name": "shopsmart-backend",
+      "image": "807717203754.dkr.ecr.us-east-1.amazonaws.com/shopsmart-backend:latest",
+      "portMappings": [
+        { "containerPort": 4000, "protocol": "tcp" }
+      ],
+      "environment": [
+        { "name": "DATABASE_URL", "value": "mysql://RdmPkMfFLqbW1GC.root:OgYY5q1xdCu5a8b4@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/test?ssl=true&sslaccept=strict" },
+        { "name": "JWT_SECRET", "value": "shopsmart-super-secret-jwt-key-2025" },
+        { "name": "CLIENT_URL", "value": "http://3.94.159.212" },
+        { "name": "PORT", "value": "4000" },
+        { "name": "NODE_ENV", "value": "production" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/shopsmart",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "backend",
+          "awslogs-create-group": "true"
+        }
+      },
+      "essential": true
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "family": "shopsmart-frontend-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::807717203754:role/LabRole",
+  "taskRoleArn": "arn:aws:iam::807717203754:role/LabRole",
+  "containerDefinitions": [
+    {
+      "name": "shopsmart-frontend",
+      "image": "807717203754.dkr.ecr.us-east-1.amazonaws.com/shopsmart-frontend:latest",
+      "portMappings": [
+        { "containerPort": 80, "protocol": "tcp" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/shopsmart",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "frontend",
+          "awslogs-create-group": "true"
+        }
+      },
+      "essential": true
+    }
+  ]
+}

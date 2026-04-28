@@ -8,9 +8,9 @@
 
 | Service | URL |
 |---|---|
-| Backend API | `http://100.31.41.93:4000` |
-| Health Check | `http://100.31.41.93:4000/health` |
-| Frontend | `http://3.94.159.212` |
+| Backend API | `http://54.89.151.90:4000` |
+| Health Check | `http://54.89.151.90:4000/health` |
+| Frontend | `http://54.242.97.121` |
 
 ---
 
@@ -149,7 +149,8 @@ aws ecs describe-services --cluster shopsmart-cluster --services shopsmart-backe
 | Task Definition | `shopsmart-task` |
 | Backend Service | `shopsmart-backend-service` |
 | Frontend Service | `shopsmart-frontend-service` |
-| Task Public IP | `100.31.41.93` |
+| Backend Task IP | `54.89.151.90` |
+| Frontend Task IP | `54.242.97.121` |
 | ECR Backend | `807717203754.dkr.ecr.us-east-1.amazonaws.com/shopsmart-backend` |
 | ECR Frontend | `807717203754.dkr.ecr.us-east-1.amazonaws.com/shopsmart-frontend` |
 | Security Group | `sg-8a9b15d0` |
